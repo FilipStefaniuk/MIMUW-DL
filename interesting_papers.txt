@@ -1,0 +1,6 @@
+* Paper on training ResNet for ImageNet in 1h, the discussion on the relationship
+  between the batch size and the learning rate is interesting: https://arxiv.org/abs/1706.02677
+* Paper introducing batch normalization: https://arxiv.org/abs/1502.03167
+* Paper introducing weight normalization, an alternative to BN: https://arxiv.org/abs/1602.07868
+* Paper on the interaction between batch normalization and L2 regularization: https://arxiv.org/abs/1706.05350
+* Original ResNet paper, important insights on training very deep networks: https://arxiv.org/abs/1512.03385

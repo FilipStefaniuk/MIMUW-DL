@@ -1,0 +1,13 @@
+KOLEJKOWANIE PROCESOW:
+srun --gres=gpu [program]
+Na przyklad
+srun --gres=gpu /home/mucha/.virtualenvs/DL/bin/python3.5 program.py --bla 5 --blabla 10
+
+Zeby ten proces nie zginal po ubiciu terminala konieczne jest uzycie screena lub tmux lub innych takich.
+Ew. polecenia sbatch zamiast srun, byc moze opiszemy je w tutorialu pozniej.
+
+SPRAWDZANIE STANU KOLEJKI:
+squeue
+
+SPRAWDZANIE STANU KART: (byc moze ktos wszedl poza kolejka, zglaszac takich! ubijemy!)
+nvidia-smi
