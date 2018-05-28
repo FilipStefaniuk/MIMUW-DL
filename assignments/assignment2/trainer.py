@@ -60,7 +60,7 @@ class UnetTrainer(object):
             print('Global step: {}'.format(global_step))
             print('Training: loss {0}, accuracy {1}'.format(loss, acc))
 
-        # self.model.save(self.sess)
+        self.model.save(self.sess)
         self.validate()
 
     def train(self):
@@ -80,22 +80,19 @@ class UnetTrainer(object):
 
         self.sess.run(self.data.val_iterator.initializer)
 
-        while True:
-            try:
-                orig_x, orig_y, data_x, data_y = self.sess.run(self.data.val_next)
+        loop = tqdm(range(self.data.validation_len), ncols=120, desc='Validation')
+        for _ in loop:
+            orig_x, orig_y, data_x, data_y = self.sess.run(self.data.val_next)
 
-                feed_dict={
-                    self.model.x: data_x,
-                    self.model.y: data_y,
-                    self.model.orig_x: orig_x,
-                    self.model.orig_y: orig_y
-                }
+            feed_dict={
+                self.model.x: data_x,
+                self.model.y: data_y,
+                self.model.orig_x: orig_x,
+                self.model.orig_y: orig_y
+            }
 
-                acc = self.sess.run(self.model.orig_acc, feed_dict=feed_dict)
-                accs.append(acc)
-
-            except tf.errors.OutOfRangeError:
-                break
+            acc = self.sess.run(self.model.orig_acc, feed_dict=feed_dict)
+            accs.append(acc)
 
         acc = np.mean(accs)
 

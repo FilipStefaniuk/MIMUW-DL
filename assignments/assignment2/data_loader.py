@@ -1,7 +1,6 @@
 import os
 import random
 import tensorflow as tf
-from model import UnetModel
 
 class DataLoader(object):
 
@@ -20,9 +19,9 @@ class DataLoader(object):
         random.seed(self.config.random_state)
         random.shuffle(basenames)
 
-        split = int(len(basenames) * self.config.validation_size)
-        training_names = basenames[split:]
-        validation_names = basenames[:split]
+        self.validation_len = int(len(basenames) * self.config.validation_size)
+        training_names = basenames[self.validation_len:]
+        validation_names = basenames[:self.validation_len]
 
         training_imgs = [os.path.join(training_dir, 'images', basename + '.jpg') for basename in training_names]
         training_labels = [os.path.join(training_dir, 'labels_plain', basename + '.png') for basename in training_names]

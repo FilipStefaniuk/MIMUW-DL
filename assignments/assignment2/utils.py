@@ -1,5 +1,6 @@
 import os
 import json
+import argparse
 from bunch import Bunch
 
 
@@ -15,3 +16,16 @@ def process_config(json_file):
     config.summary_dir = os.path.join("./experiments", config.exp_name, "summary/")
     config.checkpoint_dir = os.path.join("./experiments", config.exp_name, "checkpoint/")
     return config
+
+def get_args():
+    argparser = argparse.ArgumentParser()
+    
+    argparser.add_argument(
+        '-c', '--config',
+        metavar='C',
+        default='None',
+        help='The Configuration file')
+    
+    args = argparser.parse_args()
+    
+    return args
