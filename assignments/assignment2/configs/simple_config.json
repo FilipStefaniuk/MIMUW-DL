@@ -2,16 +2,20 @@
     "exp_name": "model1",
 
     "random_state": 42,
+    "use_test": false,
     "data_path": "/scidata/assignment2/",
-    "validation_size": 0.5,
+    "validation_size": 0.1,
     "num_parallel_calls": 8,
+
+    "input_size": 256,
+    "augmentations": ["horizontal_flip"],
     
-    "epochs": 30,
+    "epochs": 10,
     "steps_in_epoch": 200,
     "batch_size": 32,
     "crop_size": 256,
     "learning_rate": 1e-4,
     
     "max_to_keep": 1,
-    "verbose": 0
+    "verbose": 1
 }

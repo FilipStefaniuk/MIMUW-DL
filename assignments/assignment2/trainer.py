@@ -29,7 +29,7 @@ class UnetTrainer(object):
         feed_dict = {self.model.x: batch_x, self.model.y: batch_y}
         _, loss, acc = self.sess.run([self.model.train_step, self.model.loss, self.model.acc],
                                      feed_dict=feed_dict)
-        return loss, acc[0]
+        return loss, acc
 
     def train_epoch(self, epoch_num):
         
@@ -60,7 +60,7 @@ class UnetTrainer(object):
             print('Global step: {}'.format(global_step))
             print('Training: loss {0}, accuracy {1}'.format(loss, acc))
 
-        self.model.save(self.sess)
+        # self.model.save(self.sess)
         self.validate()
 
     def train(self):
@@ -92,7 +92,7 @@ class UnetTrainer(object):
                 }
 
                 acc = self.sess.run(self.model.orig_acc, feed_dict=feed_dict)
-                accs.append(acc[0])
+                accs.append(acc)
 
             except tf.errors.OutOfRangeError:
                 break

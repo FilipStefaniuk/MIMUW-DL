@@ -9,10 +9,10 @@
     "num_parallel_calls": 8,
     
     "input_size": 256,
-    "augmentations": ["horizontal_flip"],
+    "augmentations": ["horizontal_flip", "rotation"],
 
     "epochs": 1,
-    "steps_in_epoch": 20,
+    "steps_in_epoch": 5,
     "batch_size": 4,
     "crop_size": 256,
     "learning_rate": 1e-4,

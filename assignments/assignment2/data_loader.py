@@ -77,6 +77,8 @@ class DataLoader(object):
         
         if "horizontal_flip" in self.config.augmentations:
             img = tf.image.random_flip_left_right(img)
+        if "rotation" in self.config.augmentations:
+            img = tf.contrib.image.rotate(img, tf.random_uniform([1], minval=-0.26, maxval=0.26, dtype=tf.float32))
 
         return img[:, :, :img_ch], img[:, :, img_ch:]
 
@@ -90,6 +92,11 @@ class DataLoader(object):
         
         if "horizontal_flip" in self.config.augmentations:
             img = tf.concat([img, tf.image.flip_left_right(img)], 0)
+
+        if "rotation" in self.config.augmentations:
+            rotated_left = tf.contrib.image.rotate(img, 0.13)
+            rotated_right = tf.contrib.image.rotate(img, -0.13)
+            img = tf.concat([img, rotated_left, rotated_right], 0)
 
         orig_imgs = img[:, :, :, :img_ch]
         orig_labels = img[:, :, :, img_ch:]
