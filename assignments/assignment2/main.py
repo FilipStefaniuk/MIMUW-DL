@@ -17,3 +17,4 @@ if __name__ == '__main__':
         logger = Logger(sess, config)
         trainer = UnetTrainer(sess, model, data, config, logger)
         trainer.train()
+        # trainer.validate()

@@ -27,54 +27,76 @@ class UnetModel(object):
 
         self.x = tf.placeholder(tf.float32, [None, self.config.crop_size, self.config.crop_size, 3], name='x')
         self.y = tf.placeholder(tf.int32, [None, self.config.crop_size, self.config.crop_size, 1], name='y')
+        
+        self.orig_x = tf.placeholder(tf.float32, [None, None, None, 3], name='orig-x')
+        self.orig_y = tf.placeholder(tf.int32, [None, None, None, 1], name='orig-y')
 
         self.global_step = tf.Variable(0, trainable=False, name='global_step')
-        self.labels = tf.reshape(self.y, shape=[-1, self.config.crop_size, self.config.crop_size], name='labels')
 
-        c1 = self.conv2d_3x3(8) (self.x)        # 128x128x8
-        b1 = self.batch_norm() (c1)
-        p1 = self.max_pool() (b1)           
+        c1 = self.conv2d_3x3(8) (self.x)        # 256x256x8
+        c1 = self.batch_norm() (c1)
+        # c1 = self.conv2d_3x3(8) (c1)
+        # b1 = self.batch_norm() (c1)
+        p1 = self.max_pool() (c1)           
 
-        c2 = self.conv2d_3x3(16) (p1)           # 64x64x16
-        b2 = self.batch_norm() (c2)
-        p2 = self.max_pool() (b2)
+        c2 = self.conv2d_3x3(16) (p1)           # 128x128x16
+        c2 = self.batch_norm() (c2)
+        # c2 = self.conv2d_3x3(16) (c2)
+        # b2 = self.batch_norm() (c2)
+        p2 = self.max_pool() (c2)
 
-        c3 = self.conv2d_3x3(32) (p2)           # 32x32x32
-        b3 = self.batch_norm() (c3)
-        p3 = self.max_pool() (b3)
+        c3 = self.conv2d_3x3(32) (p2)           # 64x64x32
+        c3 = self.batch_norm() (c3)
+        # c3 = self.conv2d_3x3(32) (c3)
+        # b3 = self.batch_norm() (c3)
+        p3 = self.max_pool() (c3)
 
-        c4 = self.conv2d_3x3(64) (p3)           # 16x14x64
-        b4 = self.batch_norm() (c4)
-        p4 = self.max_pool() (b4)
+        # c4 = self.conv2d_3x3(64) (p3)           # 32x32x64
+        # c4 = self.batch_norm() (c4)
+        # c4 = self.conv2d_3x3(64) (c4)
+        # b4 = self.batch_norm() (c4)
+        # p4 = self.max_pool() (c4)
 
-        c5 = self.conv2d_3x3(128) (p4)          # 8x8x128
-        b5 = self.batch_norm() (c5)
+        # c5 = self.conv2d_3x3(128) (p4)          # 16x16x128
+        # c5 = self.batch_norm() (c5)
+        # c5 = self.conv2d_3x3(128) (c5)
+        # b5 = self.batch_norm() (c5)
 
-        u6 = self.conv2d_transpose_2x2(64) (b5) # 16x16x64
-        b6 = self.batch_norm() (u6)
-        u6 = self.concatenate([b6, b4])         # 16x16x128
-        c6 = self.conv2d_3x3(66) (u6)           # 16x16x66
+        # u6 = self.conv2d_transpose_2x2(64) (p4) # 32x32x64
+        # b6 = self.batch_norm() (u6)
+        # u6 = self.concatenate([u6, c4])         # 32x32x128
+        # c6 = self.conv2d_3x3(66) (u6)           # 32x32x66
+        # b6 = self.batch_norm() (c6)
 
-        u7 = self.conv2d_transpose_2x2(66) (c6) # 32x32x66
-        b7 = self.batch_norm() (u7)
-        u7 = self.concatenate([b7, b3])         # 32x32x98
-        c7 = self.conv2d_3x3(66) (u7)           # 32x32x66
+        u7 = self.conv2d_transpose_2x2(66) (p3) # 64x64x66
+        u7 = self.batch_norm() (u7)
+        u7 = self.concatenate([u7, c3])         # 64x64x98
+        # c7 = self.conv2d_3x3(66) (u7)           # 64x64x66
+        # b7 = self.batch_norm() (c7)
 
-        u8 = self.conv2d_transpose_2x2(66) (c7) # 64x64x66
-        b8 = self.batch_norm() (u8)
-        u8 = self.concatenate([b8, b2])         # 64x64x82
-        c8 = self.conv2d_3x3(66) (u8)           # 64x64x66
+        u8 = self.conv2d_transpose_2x2(66) (u7) # 128x128x66
+        u8 = self.batch_norm() (u8)
+        u8 = self.concatenate([u8, c2])         # 128x128x82
+        # c8 = self.conv2d_3x3(66) (u8)           # 128x128x66
+        # b8 = self.batch_norm() (c8)
 
-        u9 = self.conv2d_transpose_2x2(66) (c8) # 128x128x66
-        b9 = self.batch_norm() (u9)
-        u9 = self.concatenate([b9, b1])         # 128x128x74
-        c9 = self.conv2d_3x3(66) (u9)           # 128x128x66
+        u9 = self.conv2d_transpose_2x2(66) (u8) # 256x256x66
+        u9 = self.batch_norm() (u9)
+        u9 = self.concatenate([u9, c1])         # 256x256x74
+        # c9 = self.conv2d_3x3(66) (u9)           # 256x256x66
+        # b9 = self.batch_norm() (c9)
 
-        self.logits = tf.layers.Conv2D(66, (1, 1)) (c9)
+        self.logits = tf.layers.Conv2D(66, (1, 1)) (u9)
 
-        self.loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.labels, logits=self.logits))
-        self.acc = tf.metrics.accuracy(labels=self.labels, predictions=tf.argmax(self.logits, axis=3))
+        self.predictions = tf.expand_dims(tf.argmax(self.logits, axis=3), -1)
+
+        self.loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.squeeze(self.y), logits=self.logits))
+        self.acc = tf.metrics.accuracy(labels=self.y, predictions=self.predictions)
         self.train_step = tf.train.RMSPropOptimizer(self.config.learning_rate).minimize(self.loss, global_step=self.global_step)
+
+        orig_shape_x = tf.shape(self.orig_x)
+        self.orig_predictions = tf.image.resize_images(self.predictions, (orig_shape_x[1], orig_shape_x[2]))
+        self.orig_acc = tf.metrics.accuracy(labels=self.orig_y, predictions=self.orig_predictions)
     
     def save(self, sess):
         model_name = self.saver.save(sess, os.path.join(self.config.checkpoint_dir, self.config.exp_name), self.global_step)

@@ -3,10 +3,10 @@
 
     "random_state": 42,
     "data_path": "/scidata/assignment2/",
-    "validation_size": 0.2,
+    "validation_size": 0.5,
     "num_parallel_calls": 8,
     
-    "epochs": 10,
+    "epochs": 30,
     "steps_in_epoch": 200,
     "batch_size": 32,
     "crop_size": 256,
