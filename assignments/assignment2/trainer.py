@@ -1,6 +1,9 @@
 import tensorflow as tf
 import numpy as np
+import os
+from PIL import Image
 from tqdm import tqdm
+
 
 class UnetTrainer(object):
     
@@ -20,6 +23,9 @@ class UnetTrainer(object):
         # Create dirs for saving model and summary
         tf.gfile.MakeDirs(self.config.checkpoint_dir)
         tf.gfile.MakeDirs(self.config.summary_dir)
+        
+        if self.config.use_test:
+            tf.gfile.MakeDirs(os.path.join(self.data.test_dir, 'predictions'))
 
         # Try to load model
         self.model.load(sess)
@@ -67,10 +73,25 @@ class UnetTrainer(object):
         for i in range(1, self.config.epochs + 1):
             self.train_epoch(i)
 
-    def predict(self, orig_data_x, data_x):
+    def predict(self):
 
-        feed_dict = {self.model.x: data_x, self.model.orig_x: orig_data_x}
-        prediction = self.sess.run(self.model.orig_predictions, feed_dict=feed_dict)
+        if self.config.use_test:
+
+            loop = tqdm(range(self.data.test_len), ncols=120, desc='Testing')
+            self.sess.run(self.data.test_iterator.initializer)
+
+            for _ in loop:
+                path, img_orig, img = self.sess.run(self.data.test_next)
+                path = path.decode('utf-8')
+
+                feed_dict = {self.model.x: img, self.model.orig_x: img_orig}
+                prediction = self.sess.run(self.model.orig_predictions, feed_dict=feed_dict)
+
+                pred_img = Image.fromarray(np.uint8(np.squeeze(prediction)))
+                basename = os.path.splitext(os.path.basename(path))[0]
+                pred_img.save(os.path.join(self.config.predictions_dir, basename + 'png'))
+
+
         
         return prediction
 

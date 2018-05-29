@@ -16,7 +16,9 @@ class DataLoader(object):
         # Training data
         basenames = [os.path.splitext(os.path.basename(fname))[0] for fname in os.listdir(os.path.join(training_dir, 'images'))]
         
+        
         random.seed(self.config.random_state)
+        basenames.sort()
         random.shuffle(basenames)
 
         self.validation_len = int(len(basenames) * self.config.validation_size)
@@ -40,14 +42,16 @@ class DataLoader(object):
 
         # Test data
         if self.config.use_test:
-            test_dir = os.path.join(self.config.data_path, 'test')
+            self.test_dir = os.path.join(self.config.data_path, 'test')
             
-            test_imgs = [os.path.join(test_dir, 'images', fname) for fname in os.listdir(os.path.join(test_dir, 'images'))]
+            test_imgs = [os.path.join(self.test_dir, 'images', fname) for fname in os.listdir(os.path.join(self.test_dir, 'images'))]
             assert all(map(os.path.isfile, test_imgs))
             
+            self.test_len = len(test_imgs)
             self.test_imgs = tf.constant(test_imgs)
         
         else:
+            self.test_len = None
             self.test_imgs = None
 
 
@@ -64,7 +68,7 @@ class DataLoader(object):
     def _parse_img(self, img_path):
         img_file = tf.read_file(img_path)
         img_decoded = tf.image.decode_jpeg(img_file, channels=3)
-        return img_decoded
+        return img_path, img_decoded
 
     def _transform_img_tr(self, img, label):
 
@@ -104,11 +108,11 @@ class DataLoader(object):
         
         return orig_imgs, orig_labels, img[:, :, :, :img_ch], img[:, :, :, img_ch:]
 
-    def _transform_img_test(self, img):
+    def _transform_img_test(self, img_path, img):
         
         img = tf.expand_dims(img, 0)
         new_img = tf.image.resize_images(img, (self.config.input_size, self.config.input_size))
-        return img, new_img
+        return img_path, img, new_img
 
     def _build_dataset(self):
 

@@ -17,6 +17,6 @@ if __name__ == '__main__':
     with tf.Session() as sess:
         logger = Logger(sess, config)
         trainer = UnetTrainer(sess, model, data, config, logger)
-        trainer.train()
+        trainer.predict()
         
         # trainer.validate()
