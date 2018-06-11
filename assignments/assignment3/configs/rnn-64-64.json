@@ -1,0 +1,15 @@
+{
+    "experiment_name": "rnn-64-64",
+    
+    "epoch": 200,
+    "steps": 10000,
+    "batch_size": 32,
+    "verbose": false,
+
+    "cell_type": "rnn",
+    "hidden_sizes": [64, 64],
+
+    "save": false,
+    "save_every": 200,
+    "max_to_keep": 1
+}
