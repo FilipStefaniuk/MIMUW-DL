@@ -1,0 +1,2 @@
+model_checkpoint_path: "rnn-64-110001"
+all_model_checkpoint_paths: "rnn-64-110001"

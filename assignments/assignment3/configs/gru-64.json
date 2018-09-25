@@ -1,0 +1,16 @@
+{
+    "experiment_name": "gru-64",
+
+    "epoch": 200,
+    "steps": 10001,
+    "batch_size": 256,
+    "max_brackets": 50,
+    "verbose": false,
+
+    "cell_type": "gru",
+    "hidden_sizes": [64],
+
+    "save": true,
+    "save_every": 1000,
+    "max_to_keep": 1
+}
